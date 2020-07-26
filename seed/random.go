@@ -8,6 +8,8 @@ import (
 	"github.com/google/uuid"
 )
 
+// init() will be invoked everytime seed package is call before any other method
+// just like construct() in class method
 func init() {
 	rand.Seed(time.Now().UnixNano())
 }
