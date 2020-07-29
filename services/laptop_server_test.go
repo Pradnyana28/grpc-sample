@@ -6,6 +6,7 @@ import (
 	"github.com/Pradnyana28/uploads/seed"
 	"github.com/Pradnyana28/uploads/services"
 	"github.com/Pradnyana28/uploads/uploadpb"
+	"github.com/stretchr/testify/require"
 	"google.golang.org/grpc/codes"
 )
 
@@ -15,8 +16,13 @@ func TestServerCreateLaptop(t *testing.T) {
 	laptopNoId := seed.NewLaptop()
 	laptopNoId.Id = ""
 
-	laptopFailedId := seed.NewLaptop()
-	laptopFailedId.Id = "asd976a8s7d6a9s"
+	laptopInvalidId := seed.NewLaptop()
+	laptopInvalidId.Id = "invalid-id"
+
+	laptopDuplicateId := seed.NewLaptop()
+	storeDuplicateId := services.NewInMemoryLaptopStore()
+	err := storeDuplicateId.Save(laptopDuplicateId)
+	require.Nil(t, err)
 
 	testCases := []struct {
 		name string
@@ -42,5 +48,26 @@ func TestServerCreateLaptop(t *testing.T) {
 			store: services.NewInMemoryLaptopStore(),
 			code: codes.InvalidArgument,
 		},
+		{
+			name: "failure_duplicate_id",
+			laptop: laptopDuplicateId,
+			store: storeDuplicateId,
+			code: codes.AlreadyExists,
+		},
+	}
+
+	for i := range testCases {
+		tc := testCases[i]
+
+		t.Run(tc.name, func (t *testing.T) {
+			t.Parallel()
+
+			req := &uploadpb.CreateLaptopRequest{
+				Laptop: tc.laptop,
+			}
+
+			server := services.NewLaptopServer(tc.store)
+			
+		})
 	}
 }
