@@ -17,8 +17,8 @@ type LaptopServer struct {
 }
 
 // NewLaptopServer ...
-func NewLaptopServer() *LaptopServer {
-	return &LaptopServer{}
+func NewLaptopServer(s LaptopStore) *LaptopServer {
+	return &LaptopServer{s}
 }
 
 // CreateLaptop is a unary RPC to create a new laptop

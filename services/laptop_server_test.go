@@ -16,7 +16,7 @@ func TestServerCreateLaptop(t *testing.T) {
 	laptopNoId.Id = ""
 
 	laptopFailedId := seed.NewLaptop()
-	laptopFailedId = "asd976a8s7d6a9s"
+	laptopFailedId.Id = "asd976a8s7d6a9s"
 
 	testCases := []struct {
 		name string
@@ -41,6 +41,6 @@ func TestServerCreateLaptop(t *testing.T) {
 			laptop: laptopInvalidId,
 			store: services.NewInMemoryLaptopStore(),
 			code: codes.InvalidArgument,
-		}
+		},
 	}
 }
