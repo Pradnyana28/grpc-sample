@@ -51,11 +51,11 @@ func (server *LaptopServer) CreateLaptop(
 			code = codes.AlreadyExists
 		}
 
-		return nil, status.Errorf(code, "cannot save laptop to the store: %w", err)
+		return nil, status.Errorf(code, "cannot save laptop to the store: %v", err)
 	}
 
 	log.Printf("saved laptop with id: %s", laptop.Id)
-	
+
 	res := &uploadpb.CreateLaptopResponse{
 		Id: laptop.Id,
 	}
