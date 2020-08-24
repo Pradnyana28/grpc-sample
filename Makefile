@@ -4,8 +4,11 @@ run: ## generate protobuf file to go file
 clean: ## clean the generated protobuf
 	rm uploadpb/*
 
-up: ## start server
-	go run main.go
+server: ## start server
+	go run cmd/server/main.go -port 5050
+
+client: ## start client server
+	go run cmd/client/main.go -address 0.0.0.0:5050
 
 test: ## run unit testing
 	go test -cover -race ./...
