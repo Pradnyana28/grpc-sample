@@ -14,13 +14,16 @@ var ErrAlreadyExists = errors.New("record already exist")
 
 // LaptopStore is an interface to store laptop
 type LaptopStore interface {
-	Save (laptop *uploadpb.Laptop) error
+	// Save saves the laptop to the store
+	Save(laptop *uploadpb.Laptop) error
+	// Find find the laptop by its id
+	Find(id string) (*uploadpb.Laptop, error)
 }
 
 // InMemoryLaptopStore stores laptop in memory
 type InMemoryLaptopStore struct {
 	mutex sync.RWMutex
-	data map[string]*uploadpb.Laptop
+	data  map[string]*uploadpb.Laptop
 }
 
 // NewInMemoryLaptopStore returns a new InMemoryLaptopStore
@@ -49,4 +52,24 @@ func (store *InMemoryLaptopStore) Save(laptop *uploadpb.Laptop) error {
 	// save to store
 	store.data[other.Id] = other
 	return nil
+}
+
+// Find the related store by its id
+func (store *InMemoryLaptopStore) Find(id string) (*uploadpb.Laptop, error) {
+	store.mutex.RLock()
+	defer store.mutex.RUnlock()
+
+	laptop := store.data[id]
+	if laptop == nil {
+		return nil, nil
+	}
+
+	// deep copy
+	other := &uploadpb.Laptop{}
+	err := copier.Copy(other, laptop)
+	if err != nil {
+		return nil, fmt.Errorf("cannot copy laptop data: %w", err)
+	}
+
+	return other, nil
 }
